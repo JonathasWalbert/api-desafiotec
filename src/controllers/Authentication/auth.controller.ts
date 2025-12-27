@@ -7,9 +7,9 @@ export async function registerUser(req: Request, res: Response) {
   try {
     const data = registerUserSchema.parse(req.body);
 
-    const newUser = await AuthService.create(data);
+    const token = await AuthService.create(data);
 
-    return res.status(201).json(newUser);
+    return res.status(201).json(token);
   } catch (error: any) {
     return res.status(400).json({
       error: error.message || "Erro ao registrar novo usuário",
