@@ -22,7 +22,7 @@ export class AuthService {
       password: passwordHash,
     });
 
-    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET!, {
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });
     return {
@@ -44,7 +44,7 @@ export class AuthService {
       throw new Error("Senha incorreta");
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET!, {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1h",
     });
     return {
