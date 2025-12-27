@@ -52,14 +52,4 @@ export class AuthService {
     };
   }
 
-  // static async list(): Promise<UserResponseDTO[]> {
-  //   const users = await User.find();
-
-  //   return users.map(user => ({
-  //     id: user.id,
-  //     name: user.name,
-  //     email: user.email,
-  //     createdAt: user.createdAt
-  //   }));
-  // }
 }
