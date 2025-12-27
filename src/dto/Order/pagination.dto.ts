@@ -1,4 +1,5 @@
-export interface PaginationDTO{
-    page: number;
-    limit: number;
+export interface PaginationDTO {
+  page: number;
+  limit: number;
+  state?: "CREATED" | "ANALYSIS" | "COMPLETED";
 }
