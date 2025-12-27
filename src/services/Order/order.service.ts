@@ -27,6 +27,7 @@ export class OrderService {
       lab: order.lab,
       patient: order.patient,
       customer: order.customer,
+      total: order.total,
       state: order.state,
       status: order.status,
       services: order.services,
@@ -47,8 +48,21 @@ export class OrderService {
     userId: string,
     data: OrderDTO
   ): Promise<CreateOrderResponseDTO> {
+    //verificar se ha servico no pedido e verificar o total do pedido
+
+    if(data.services.length === 0 || !data.services){
+      throw new Error("O pedido deve conter ao menos um serviço.");
+    }
+    
+    const total = data.services.reduce((sum, service) => sum + service.value, 0);
+
+    if (total === 0){
+      throw new Error("O total do pedido não pode ser zero.");
+    }
+
     const newOrder = await Order.create({
       ...data,
+      total,
       ownerId: userId,
     });
 
@@ -110,6 +124,7 @@ export class OrderService {
       lab: order.lab,
       patient: order.patient,
       customer: order.customer,
+      total: order.total,
       state: order.state,
       status: order.status,
       services: order.services,

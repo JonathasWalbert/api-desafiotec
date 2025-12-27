@@ -5,6 +5,7 @@ export interface OrdeProps extends Document{
     lab: string;
     patient: string;
     customer: string;
+    total: number;
     state: 'CREATED' | 'ANALYSIS' | 'COMPLETED';
     status: 'ACTIVE' | 'DELETED';
     services: {
@@ -19,6 +20,7 @@ const OrderSchema = new Schema<OrdeProps>({
     lab: { type: String, required: true },
     patient: { type: String, required: true },
     customer: { type: String, required: true },
+    total: { type: Number, required: true },
     state: { type: String, enum: ['CREATED', 'ANALYSIS', 'COMPLETED'], default: 'CREATED' },
     status: { type: String, enum: ['ACTIVE', 'DELETED'], default: 'ACTIVE' },
     services: [

@@ -3,6 +3,7 @@ export interface OrderResponseDTO{
     lab: string;
     patient: string;
     customer: string;
+    total: number;
     state: string;
     status: string;
     services: {
