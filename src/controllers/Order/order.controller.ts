@@ -19,9 +19,11 @@ export async function getOrder(req: Request, res: Response){
 
 export async function createOrder(req: Request, res: Response){
     try{
-        const data = orderSchema.parse(req.body);
+        const userId = req.userId!;
 
-        const result = await OrderService.create(data);
+        const data = orderSchema.parse(req.body);
+        
+        const result = await OrderService.create(userId, data);
 
         return res.status(201).json(result);
     }catch(error: any){

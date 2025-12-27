@@ -1,6 +1,7 @@
 import { Document, model, Schema } from "mongoose";
 
 export interface OrdeProps extends Document{
+    ownerId: string;
     lab: string;
     patient: string;
     customer: string;
@@ -14,6 +15,7 @@ export interface OrdeProps extends Document{
 }
 
 const OrderSchema = new Schema<OrdeProps>({
+    ownerId: { type: String, required: true },
     lab: { type: String, required: true },
     patient: { type: String, required: true },
     customer: { type: String, required: true },

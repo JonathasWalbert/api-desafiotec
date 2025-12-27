@@ -2,7 +2,8 @@ import { OrderDTO } from "../../dto/Order/createOrder.dto";
 import { CreateOrderResponseDTO } from "../../dto/Order/createOrderResponse.dto";
 import { OrderResponseDTO } from "../../dto/Order/orderResponse.dto";
 import { PaginatedResponseDTO } from "../../dto/Order/paginatedResponse.dto";
-import { PaginationDTO } from "../../dto/Order/Pagination.dto";
+import { PaginationDTO } from "../../dto/Order/pagination.dto";
+
 import { Order } from "../../models/Order";
 
 export class OrderService{
@@ -41,8 +42,11 @@ export class OrderService{
         }
     }
 
-    static async create(data: OrderDTO): Promise<CreateOrderResponseDTO>{
-        const newOrder = await Order.create(data);
+    static async create(userId: string, data: OrderDTO): Promise<CreateOrderResponseDTO>{
+        const newOrder = await Order.create({
+            ...data,
+            ownerId: userId
+        });
 
         if(!newOrder){
             throw new Error("Erro ao criar novo pedido");
