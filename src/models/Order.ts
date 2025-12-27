@@ -1,6 +1,6 @@
-import { model, Schema } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 
-export interface OrdeProps{
+export interface OrdeProps extends Document{
     lab: string;
     patient: string;
     customer: string;
