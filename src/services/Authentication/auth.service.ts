@@ -1,13 +1,12 @@
-import { LoginUserDTO } from "../dto/User/login.dto.js";
-import { RegisterUserDTO } from "../dto/User/register.dto.js";
-import { UserResponseDTO } from "../dto/User/token.dto.js";
-import { User } from "../models/User.js";
+import { LoginUserDTO } from "../../dto/Authentication/login.dto.js";
+import { RegisterUserDTO } from "../../dto/Authentication/register.dto.js";
+import { UserResponseDTO } from "../../dto/Authentication/token.dto.js";
+import { User } from "../../models/User.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-
-export class UserService {
+export class AuthService {
   static async create(data: RegisterUserDTO): Promise<UserResponseDTO> {
     //Verificar se ja existe email criado, caso sim, retornar erro. Caso contrario, criar email e retornar token.
     const userExists = await User.findOne({ email: data.email });
@@ -20,16 +19,14 @@ export class UserService {
 
     const newUser = await User.create({
       email: data.email,
-      password: passwordHash
+      password: passwordHash,
     });
 
-    const token = jwt.sign(
-      {email: newUser.email},
-      process.env.JWT_SECRET!,
-      {expiresIn: "1d"}
-    )
+    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET!, {
+      expiresIn: "1d",
+    });
     return {
-      token
+      token,
     };
   }
 
@@ -47,13 +44,11 @@ export class UserService {
       throw new Error("Senha incorreta");
     }
 
-    const token = jwt.sign(
-      {userId: user._id},
-      process.env.JWT_SECRET!,
-      {expiresIn: "1d"}
-    )
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
+      expiresIn: "1d",
+    });
     return {
-      token
+      token,
     };
   }
 

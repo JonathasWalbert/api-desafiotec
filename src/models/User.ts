@@ -1,11 +1,11 @@
 import { Schema, model, Document } from "mongoose";
 
-export interface IUser extends Document {
+export interface UserProps extends Document {
   email: string;
   password: string;
 }
 
-const UserSchema = new Schema<IUser>(
+const UserSchema = new Schema<UserProps>(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 8 },
@@ -13,4 +13,4 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-export const User = model<IUser>("User", UserSchema);
+export const User = model<UserProps>("User", UserSchema);

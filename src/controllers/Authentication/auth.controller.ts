@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { registerUserSchema } from "../../validators/User/register.schema.js";
-import { UserService } from "../../services/user.service.js";
-import { loginUserSchema } from "../../validators/User/login.schema.js";
+import { registerUserSchema } from "../../validators/Authentication/register.schema.js";
+import { AuthService } from "../../services/Authentication/auth.service.js";
+import { loginUserSchema } from "../../validators/Authentication/login.schema.js";
 
 export async function registerUser(req: Request, res: Response) {
   try {
     const data = registerUserSchema.parse(req.body);
 
-    const newUser = await UserService.create(data);
+    const newUser = await AuthService.create(data);
 
     return res.status(201).json(newUser);
   } catch (error: any) {
@@ -21,7 +21,7 @@ export async function loginUser(req: Request, res: Response) {
   try {
     const data = loginUserSchema.parse(req.body);
 
-    const token = await UserService.login(data);
+    const token = await AuthService.login(data);
 
     return res.status(200).json(token);
   } catch (error: any) {
@@ -30,4 +30,3 @@ export async function loginUser(req: Request, res: Response) {
     });
   }
 }
-
