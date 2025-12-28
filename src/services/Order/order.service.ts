@@ -72,8 +72,7 @@ export class OrderService {
   }
 
   static async advance(
-    orderId: string,
-    userId: string
+    orderId: string
   ): Promise<OrderResponseDTO> {
     //buscar o pedido, ajustar o flow da mudança de state e salvar
     const order = await OrderRepository.findById(orderId);
@@ -88,14 +87,14 @@ export class OrderService {
       "COMPLETED",
     ];
 
-    const currentIndex = flow.indexOf(order.state as any);
+    const currentIndex = flow.indexOf(order.state);
 
     if (currentIndex === -1) {
       throw new Error("Estado inválido do pedido.");
     }
 
     if (currentIndex === flow.length - 1) {
-      throw new Error(`Pedido já está ${order.state}.`);
+      throw new Error(`Pedido já está state de ${order.state}.`);
     }
 
     const nextState = flow[currentIndex + 1];
