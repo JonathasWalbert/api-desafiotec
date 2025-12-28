@@ -5,6 +5,7 @@ import { PaginatedResponseDTO } from "../../dto/Order/paginatedResponse.dto";
 import { PaginationDTO } from "../../dto/Order/pagination.dto";
 
 import { Order } from "../../models/Order";
+import { OrderRepository } from "../../repositories/Order/order.repository";
 
 export class OrderService {
   static async getListOrders({
@@ -12,15 +13,7 @@ export class OrderService {
     limit,
     state,
   }: PaginationDTO): Promise<PaginatedResponseDTO<OrderResponseDTO>> {
-    const skip = (page - 1) * limit;
-
-    const filter = state ? { state } : {};
-
-    const [orders, total] = await Promise.all([
-      Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
-
-      Order.countDocuments(filter).exec(),
-    ]);
+    const { orders, total } = await OrderRepository.list({ page, limit, state });
 
     const mappedOrders: OrderResponseDTO[] = orders.map((order) => ({
       id: String(order._id),
@@ -60,11 +53,12 @@ export class OrderService {
       throw new Error("O total do pedido não pode ser zero.");
     }
 
-    const newOrder = await Order.create({
+    const newOrder = await OrderRepository.create({
       ...data,
-      total,
       ownerId: userId,
+      total,
     });
+   
 
     if (!newOrder) {
       throw new Error("Erro ao criar novo pedido");
@@ -82,7 +76,7 @@ export class OrderService {
     userId: string
   ): Promise<OrderResponseDTO> {
     //buscar o pedido, ajustar o flow da mudança de state e salvar
-    const order = await Order.findById(orderId).exec();
+    const order = await OrderRepository.findById(orderId);
 
     if (!order) {
       throw new Error("Pedido não encontrado.");
@@ -106,19 +100,21 @@ export class OrderService {
 
     const nextState = flow[currentIndex + 1];
 
-    order.state = nextState;
+    const updatedOrder = await OrderRepository.updateState(orderId, nextState);
 
-    await order.save();
+    if(!updatedOrder){
+      throw new Error("Erro ao atualizar o estado do pedido.");
+    }
 
     const mapped: OrderResponseDTO = {
-      id: String(order._id),
-      lab: order.lab,
-      patient: order.patient,
-      customer: order.customer,
-      total: order.total,
-      state: order.state,
-      status: order.status,
-      services: order.services,
+      id: String(updatedOrder._id),
+      lab: updatedOrder.lab,
+      patient: updatedOrder.patient,
+      customer: updatedOrder.customer,
+      total: updatedOrder.total,
+      state: updatedOrder.state,
+      status: updatedOrder.status,
+      services: updatedOrder.services,
     };
 
     return mapped;

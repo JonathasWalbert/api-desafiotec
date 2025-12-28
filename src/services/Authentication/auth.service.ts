@@ -5,11 +5,12 @@ import { User } from "../../models/User.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { UserRepository } from "../../repositories/Authentication/user.repository.js";
 
 export class AuthService {
   static async create(data: RegisterUserDTO): Promise<UserResponseDTO> {
     //Verificar se ja existe email criado, caso sim, retornar erro. Caso contrario, criar email e retornar token.
-    const userExists = await User.findOne({ email: data.email });
+    const userExists = await UserRepository.findByEmail(data.email);
 
     if (userExists) {
       throw new Error("Usuário já existe");
@@ -17,13 +18,13 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    const newUser = await User.create({
+    const newUser = await UserRepository.create({
       email: data.email,
       password: passwordHash,
     });
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET!, {
-      expiresIn: "1d",
+      expiresIn: "1h",
     });
     return {
       token,
@@ -32,7 +33,7 @@ export class AuthService {
 
   static async login(data: LoginUserDTO): Promise<UserResponseDTO> {
     //Procurar o email no banco de dados, verrificar a senha e retornar o token
-    const user = await User.findOne({ email: data.email });
+    const user = await UserRepository.findByEmail(data.email);
 
     if (!user) {
       throw new Error("Usuário não encontrado");
