@@ -81,20 +81,11 @@ export class OrderService {
     orderId: string,
     userId: string
   ): Promise<OrderResponseDTO> {
+    //buscar o pedido, ajustar o flow da mudança de state e salvar
     const order = await Order.findById(orderId).exec();
 
     if (!order) {
       throw new Error("Pedido não encontrado.");
-    }
-
-    if (order.status === "DELETED") {
-      throw new Error("Impossível avançar: pedido excluído.");
-    }
-
-    if (order.ownerId !== userId) {
-      throw new Error(
-        "Operação não permitida: pedido não pertence ao usuário."
-      );
     }
 
     const flow: Array<"CREATED" | "ANALYSIS" | "COMPLETED"> = [
