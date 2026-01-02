@@ -25,6 +25,7 @@ const OrderSchema = new Schema<OrdeProps>({
     status: { type: String, enum: ['ACTIVE', 'DELETED'], default: 'ACTIVE' },
     services: [
         {
+            id: { type: String, required: true },
             name: { type: String, required: true },
             value: { type: Number, required: true },
             status: { type: String, enum: ['PENDING', 'DONE'], default: 'PENDING' },

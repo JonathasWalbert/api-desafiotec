@@ -1,10 +1,9 @@
 import { OrderDTO } from "../../dto/Order/createOrder.dto";
 import { CreateOrderResponseDTO } from "../../dto/Order/createOrderResponse.dto";
+import { ServiceDTO } from "../../dto/Order/createService.dto";
 import { OrderResponseDTO } from "../../dto/Order/orderResponse.dto";
 import { PaginatedResponseDTO } from "../../dto/Order/paginatedResponse.dto";
 import { PaginationDTO } from "../../dto/Order/pagination.dto";
-
-import { Order } from "../../models/Order";
 import { OrderRepository } from "../../repositories/Order/order.repository";
 
 export class OrderService {
@@ -118,4 +117,30 @@ export class OrderService {
 
     return mapped;
   }
+
+  static async addService(
+    orderId: string,
+    data: ServiceDTO
+  ): Promise<OrderResponseDTO> {
+    //buscar o pedido, adicionar o servico, atualizar o total e salvar)
+    const existsOrder = await OrderRepository.findById(orderId);
+
+    if(!existsOrder){
+      throw new Error("Pedido não encontrado.");
+    }
+
+    const newTotal = existsOrder.total + data.value;
+
+    const orderUpdated = await OrderRepository.addService(orderId, newTotal, data);
+
+    return {
+      id: String(orderUpdated!._id),
+      lab: orderUpdated!.lab,
+      patient: orderUpdated!.patient,
+      customer: orderUpdated!.customer,
+      total: orderUpdated!.total,
+      state: orderUpdated!.state,
+      status: orderUpdated!.status,
+      services: orderUpdated!.services, 
+    }}
 }

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { orderSchema } from "../../validators/Order/order.schema";
 import { OrderService } from "../../services/Order/order.service";
 import z from "zod";
+import { serviceSchema } from "../../validators/Order/service.schema";
 
 export async function getOrder(req: Request, res: Response) {
   try {
@@ -47,12 +48,28 @@ export async function createOrder(req: Request, res: Response) {
   }
 }
 
+export async function createService(req: Request, res: Response) {
+  try {
+    const orderId = req.params.id;
+    const data = serviceSchema.parse(req.body);
+
+    const result = await OrderService.addService(orderId, data);
+
+    return res.status(201).json(result);
+  } catch (error: any) { 
+    console.error("Erro ao adicionar serviço ao pedido: ", error.message);
+
+    if (error.message && error.message.includes("não encontrado")) {
+      return res.status(404).json({ error: error.message });
+    }
+  }
+}  
+
 export async function advanceOrder(req: Request, res: Response) {
   try {
-    const userId = req.userId!;
     const orderId = req.params.id;
 
-    const result = await OrderService.advance(orderId, userId);
+    const result = await OrderService.advance(orderId);
 
     return res.status(200).json(result);
   } catch (error: any) {

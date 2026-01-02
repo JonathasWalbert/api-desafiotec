@@ -39,4 +39,12 @@ export class OrderRepository{
     static async updateState(id: string, state: "CREATED" | "ANALYSIS" | "COMPLETED"){
         return Order.findByIdAndUpdate(id, {state}, {new: true}).exec();
     }
+
+    static async addService(id: string, newTotal: number, data: {name: string; value: number}){
+        return Order.findByIdAndUpdate(id, {
+            $push: {services: data},
+            $set: {total: newTotal}
+        }, {new: true}).exec();
+    }
+    
 }
